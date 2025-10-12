@@ -1,10 +1,42 @@
 import { useState, useEffect } from 'react';
-import { navigateTo } from '../../../router/navigator';
-import { useAuth } from '../../../context/AuthContext';
 import CatRoomScene from '../../catroom/components/CatRoomScene';
+import CharacterStats from '../../catroom/components/CharacterStats';
+import RoomControls from '../../catroom/components/RoomControls';
+import ChatSystem from '../../catroom/components/ChatSystem';
+import MinimiPlayer from '../../catroom/components/MinimiPlayer';
+import GuestBook from '../../catroom/components/GuestBook';
+import ProfileSticker from '../../catroom/components/ProfileSticker';
+import VisitorList from '../../catroom/components/VisitorList';
+import { useAuth } from '../../../context/AuthContext';
+import { navigateTo } from '../../../router/navigator';
+
+interface Cat {
+  id: number;
+  x: number;
+  y: number;
+  type: 'black' | 'orange' | 'white';
+  mood: 'happy' | 'playful' | 'sleepy' | 'hungry';
+  activity: 'sitting' | 'walking' | 'sleeping' | 'playing';
+  health: number;
+  happiness: number;
+  hunger: number;
+  energy: number;
+}
+
+interface OnlineUser {
+  id: string;
+  username: string;
+  color: string;
+  x: number;
+  y: number;
+}
 
 export default function HomeCatRoomPreview() {
   const { user } = useAuth();
+  const [coins, setCoins] = useState(2450);
+  const [totalActivity, setTotalActivity] = useState(0);
+  const [miningRate, setMiningRate] = useState(1);
+  const [notification, setNotification] = useState<string | null>(null);
 
   const [roomData, setRoomData] = useState({
     playerPosition: { x: 200, y: 300 },
@@ -56,7 +88,8 @@ export default function HomeCatRoomPreview() {
   });
 
   const [selectedCat, setSelectedCat] = useState<number | null>(null);
-  const [onlineUsers] = useState([
+  const [isDecorating, setIsDecorating] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([
     {
       id: '1',
       username: '냥집사123',
@@ -70,200 +103,341 @@ export default function HomeCatRoomPreview() {
       color: '#4ECDC4',
       x: 400,
       y: 150
+    },
+    {
+      id: '3',
+      username: '픽셀캣',
+      color: '#45B7D1',
+      x: 250,
+      y: 280
     }
   ]);
 
-  // 고양이 상태 자동 변화
+  // 알림 표시
+  const showNotification = (message: string) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  // 가구 추가
+  const handleAddFurniture = (furniture: { id: number; type: string; x: number; y: number }) => {
+    const furnitureActivity: { [key: string]: number } = {
+      cat_tower: 15,
+      cat_wheel: 30,
+      sofa: 5,
+      bookshelf: 3,
+      plant: 2,
+      lamp: 0,
+      cat_bed: 8,
+      scratching_post: 12,
+      food_bowl: 5,
+      toy_ball: 20,
+      tunnel: 18
+    };
+
+    const furniturePrice: { [key: string]: number } = {
+      cat_tower: 500,
+      cat_wheel: 1200,
+      sofa: 800,
+      bookshelf: 300,
+      plant: 200,
+      lamp: 150,
+      cat_bed: 400,
+      scratching_post: 250,
+      food_bowl: 100,
+      toy_ball: 150,
+      tunnel: 350
+    };
+
+    const price = furniturePrice[furniture.type] || 0;
+    const activity = furnitureActivity[furniture.type] || 0;
+
+    setCoins(prev => prev - price);
+    setTotalActivity(prev => prev + activity);
+    setMiningRate(prev => Math.round((prev + activity * 0.1) * 10) / 10);
+
+    setRoomData(prev => ({
+      ...prev,
+      furniture: [...prev.furniture, furniture]
+    }));
+
+    showNotification(`${furniture.type} 추가! 채굴 속도 +${(activity * 0.1).toFixed(1)}/분`);
+  };
+
+  // 가구 제거
+  const handleRemoveFurniture = (id: number) => {
+    const furniture = roomData.furniture.find(f => f.id === id);
+    if (!furniture) return;
+
+    const furnitureActivity: { [key: string]: number } = {
+      cat_tower: 15,
+      cat_wheel: 30,
+      sofa: 5,
+      bookshelf: 3,
+      plant: 2,
+      lamp: 0,
+      cat_bed: 8,
+      scratching_post: 12,
+      food_bowl: 5,
+      toy_ball: 20,
+      tunnel: 18
+    };
+
+    const activity = furnitureActivity[furniture.type] || 0;
+
+    setTotalActivity(prev => prev - activity);
+    setMiningRate(prev => Math.max(1, Math.round((prev - activity * 0.1) * 10) / 10));
+
+    setRoomData(prev => ({
+      ...prev,
+      furniture: prev.furniture.filter(f => f.id !== id)
+    }));
+
+    showNotification(`${furniture.type} 제거됨`);
+  };
+
+  // 고양이 상호작용
+  const handleCatInteraction = (catId: number, action: string) => {
+    const getCatName = (id: number) => {
+      const names: { [key: number]: string } = { 1: '먼지', 2: '호랑이', 3: '눈송이' };
+      return names[id];
+    };
+
+    setRoomData(prev => ({
+      ...prev,
+      cats: prev.cats.map(cat => {
+        if (cat.id === catId) {
+          let updatedCat = { ...cat };
+
+          switch (action) {
+            case 'feed':
+              if (cat.hunger > 10) {
+                updatedCat.hunger = Math.max(0, cat.hunger - 30);
+                updatedCat.happiness = Math.min(100, cat.happiness + 10);
+                updatedCat.health = Math.min(100, cat.health + 5);
+                updatedCat.mood = 'happy';
+                updatedCat.activity = 'sitting';
+                showNotification(`${getCatName(catId)}에게 밥을 줬어요! 🍽️`);
+              } else {
+                showNotification(`${getCatName(catId)}는 배가 부른 것 같아요 😸`);
+              }
+              break;
+
+            case 'play':
+              if (cat.energy > 20) {
+                updatedCat.energy = Math.max(0, cat.energy - 20);
+                updatedCat.happiness = Math.min(100, cat.happiness + 15);
+                updatedCat.hunger = Math.min(100, cat.hunger + 10);
+                updatedCat.mood = 'playful';
+                updatedCat.activity = 'playing';
+                showNotification(`${getCatName(catId)}와 함께 놀았어요! 🎾`);
+              } else {
+                showNotification(`${getCatName(catId)}는 너무 피곤해 보여요 😴`);
+              }
+              break;
+
+            case 'pet':
+              updatedCat.happiness = Math.min(100, cat.happiness + 8);
+              updatedCat.health = Math.min(100, cat.health + 3);
+              updatedCat.mood = 'happy';
+              showNotification(`${getCatName(catId)}를 쓰다듬었어요! ❤️`);
+              break;
+
+            case 'sleep':
+              if (cat.energy < 80) {
+                updatedCat.energy = Math.min(100, cat.energy + 25);
+                updatedCat.health = Math.min(100, cat.health + 5);
+                updatedCat.mood = 'sleepy';
+                updatedCat.activity = 'sleeping';
+                showNotification(`${getCatName(catId)}가 잠들었어요! 💤`);
+              } else {
+                showNotification(`${getCatName(catId)}는 아직 잠들고 싶지 않은 것 같아요 😺`);
+              }
+              break;
+          }
+
+          return updatedCat;
+        }
+        return cat;
+      })
+    }));
+  };
+
+  // 자동 업데이트 효과들
+  useEffect(() => {
+    const miningInterval = setInterval(() => {
+      const earnedCoins = Math.round(miningRate * 10) / 10;
+      setCoins(prev => Math.round((prev + earnedCoins) * 10) / 10);
+    }, 60000);
+
+    return () => clearInterval(miningInterval);
+  }, [miningRate]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setRoomData(prev => ({
         ...prev,
         cats: prev.cats.map(cat => {
           let updatedCat = { ...cat };
-
-          // 랜덤하게 위치 변경 (천천히)
-          if (Math.random() > 0.7) {
-            updatedCat.x = Math.max(20, Math.min(580, cat.x + (Math.random() - 0.5) * 20));
-            updatedCat.y = Math.max(50, Math.min(350, cat.y + (Math.random() - 0.5) * 15));
+          updatedCat.hunger = Math.min(100, cat.hunger + Math.random() * 2);
+          updatedCat.energy = Math.max(0, cat.energy - Math.random() * 1);
+          if (updatedCat.hunger > 80) {
+            updatedCat.mood = 'hungry';
+            updatedCat.happiness = Math.max(0, updatedCat.happiness - 1);
           }
-
-          // 활동 상태 변경
-          if (Math.random() > 0.8) {
-            const activities = ['sitting', 'walking', 'sleeping', 'playing'] as const;
-            updatedCat.activity = activities[Math.floor(Math.random() * activities.length)];
+          if (updatedCat.energy < 30) {
+            updatedCat.mood = 'sleepy';
+            updatedCat.activity = 'sitting';
           }
-
+          if (updatedCat.happiness > 80 && updatedCat.energy > 50) {
+            updatedCat.mood = 'playful';
+            if (Math.random() > 0.7) {
+              updatedCat.activity = 'walking';
+            }
+          }
           return updatedCat;
         })
       }));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOnlineUsers(prev => prev.map(user => ({
+        ...user,
+        x: Math.max(20, Math.min(580, user.x + (Math.random() - 0.5) * 30)),
+        y: Math.max(50, Math.min(350, user.y + (Math.random() - 0.5) * 20))
+      })));
     }, 3000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const averageHappiness = Math.round(
-    roomData.cats.reduce((sum, cat) => sum + cat.happiness, 0) / roomData.cats.length
-  );
-
   return (
-    <section className="relative py-16 overflow-hidden bg-gradient-to-br from-[#0a0a23] via-[#1a1a3a] to-[#2a1a4a]">
-      {/* 배경 효과 */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
+    <section className="w-full min-h-screen bg-gradient-to-br from-[#0a0a23] via-[#1a1a3a] to-[#2a1a4a] py-6">
+      {/* 알림 */}
+      {notification && (
+        <div className="fixed top-4 right-4 z-50 bg-[#f6b73c] text-white px-4 py-2 rounded-lg shadow-lg animate-bounce">
+          {notification}
+        </div>
+      )}
+
+      {/* 컴팩트 헤더 */}
+      <div className="bg-black/40 backdrop-blur-sm border-b border-purple-500/30">
+        <div className="max-w-[1600px] mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-white font-bold flex items-center">
+              <i className="ri-home-heart-fill text-[#f6b73c] mr-2"></i>
+              내 캣룸 - 로그인한 사용자에게 표시
+            </h2>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setIsDecorating(!isDecorating)}
+                className={`px-3 py-1.5 rounded-lg font-medium transition-colors text-sm ${
+                  isDecorating
+                    ? 'bg-[#f6b73c] text-white shadow-lg'
+                    : 'bg-purple-800/50 text-purple-200 hover:bg-purple-700/50'
+                }`}
+              >
+                <i className="ri-hammer-line mr-1.5"></i>
+                {isDecorating ? '완료' : '꾸미기'}
+              </button>
+              <button
+                onClick={() => navigateTo('/catroom')}
+                className="px-4 py-2 bg-gradient-to-r from-[#f6b73c] to-[#ff6b6b] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all text-sm"
+              >
+                <i className="ri-fullscreen-line mr-2"></i>
+                전체화면
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 헤더 */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center px-4 py-2 bg-purple-900/30 rounded-full border border-purple-500/30 mb-4">
-            <i className="ri-home-heart-fill text-purple-400 mr-2"></i>
-            <span className="text-purple-200 text-sm font-medium">나만의 캣룸</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400">
-              내 고양이들이 기다리고 있어요! 🐱
-            </span>
-          </h2>
-          <p className="text-purple-200 text-lg max-w-2xl mx-auto">
-            실시간으로 움직이는 고양이들과 함께하는 나만의 공간
-          </p>
-        </div>
-
-        {/* 캣룸 프리뷰 */}
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-black/40 backdrop-blur-lg rounded-3xl border border-purple-500/30 overflow-hidden shadow-2xl">
-            {/* 캣룸 헤더 */}
-            <div className="bg-gradient-to-r from-purple-900/60 to-pink-900/60 backdrop-blur-sm px-6 py-4 border-b border-purple-500/30">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                    <i className="ri-user-smile-line text-white text-xl"></i>
-                  </div>
-                  <div>
-                    <h3 className="text-white font-bold text-lg">{user?.username || '나'}의 캣룸</h3>
-                    <p className="text-purple-200 text-sm">mewnion.io/{user?.username || 'myroom'}</p>
-                  </div>
+      <div className="max-w-[1800px] mx-auto px-3 py-3">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-3">
+          {/* Left Sidebar */}
+          <div className="xl:col-span-3 space-y-3">
+            <ProfileSticker />
+            <CharacterStats
+              cats={roomData.cats}
+              selectedCat={selectedCat}
+              onInteraction={handleCatInteraction}
+            />
+            <MinimiPlayer />
+            <div className="bg-gradient-to-br from-yellow-900/60 to-orange-900/60 backdrop-blur-sm rounded-2xl p-3 border border-yellow-500/30">
+              <h3 className="text-white font-bold mb-2 text-xs flex items-center">
+                <i className="ri-copper-coin-line text-yellow-400 mr-1.5"></i>
+                코인 채굴
+              </h3>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-yellow-200 text-xs">보유 코인</span>
+                  <span className="text-yellow-400 font-bold text-sm">{coins.toFixed(1)}</span>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <div className="hidden sm:flex items-center bg-purple-900/50 px-4 py-2 rounded-lg">
-                    <i className="ri-emotion-happy-line text-yellow-400 mr-2"></i>
-                    <span className="text-white font-medium">행복도 {averageHappiness}%</span>
-                  </div>
-                  <button
-                    onClick={() => navigateTo('/catroom')}
-                    className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-lg transition-all transform hover:scale-105 shadow-lg"
-                  >
-                    <i className="ri-arrow-right-line mr-2"></i>
-                    전체화면으로 보기
-                  </button>
+                <div className="flex items-center justify-between">
+                  <span className="text-yellow-200 text-xs">채굴 속도</span>
+                  <span className="text-green-400 font-bold text-xs">{miningRate.toFixed(1)}/분</span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-yellow-200 text-xs">총 활동량</span>
+                  <span className="text-purple-400 font-bold text-xs">{totalActivity}</span>
+                </div>
+                <div className="w-full h-2 bg-yellow-900/50 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all duration-300"
+                    style={{ width: `${Math.min((totalActivity / 200) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <p className="text-yellow-300 text-xs mt-1">
+                  💡 가구를 추가하면 활동량이 증가하고 코인 채굴 속도가 빨라져요!
+                </p>
               </div>
             </div>
+          </div>
 
-            {/* 캣룸 씬 */}
-            <div className="relative bg-gradient-to-br from-indigo-950/50 to-purple-950/50 p-4 sm:p-6">
-              <div className="aspect-[16/10] sm:aspect-[16/9] w-full bg-black/20 rounded-2xl overflow-hidden border border-purple-500/20">
+          {/* Main Cat Room */}
+          <div className="xl:col-span-6 flex flex-col">
+            <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-3 border border-purple-500/30 flex-1 flex flex-col">
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="text-lg font-bold text-white flex items-center">
+                  <i className="ri-home-heart-fill text-[#f6b73c] mr-2"></i>
+                  내 캣룸
+                </h1>
+                <div className="text-purple-300 text-xs">
+                  <i className="ri-map-pin-line mr-1"></i>
+                  우주 고양이별
+                </div>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center">
                 <CatRoomScene
                   roomData={roomData}
                   setRoomData={setRoomData}
                   selectedCat={selectedCat}
                   setSelectedCat={setSelectedCat}
-                  isDecorating={false}
+                  isDecorating={isDecorating}
                   onlineUsers={onlineUsers}
-                  onRemoveFurniture={() => {}}
+                  onRemoveFurniture={handleRemoveFurniture}
                 />
               </div>
-
-              {/* 미니 통계 */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                <div className="bg-purple-900/30 backdrop-blur-sm rounded-lg p-3 border border-purple-500/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <i className="ri-user-heart-line text-purple-400"></i>
-                    <span className="text-white font-bold text-lg">{roomData.cats.length}</span>
-                  </div>
-                  <p className="text-purple-200 text-xs">고양이</p>
-                </div>
-                <div className="bg-pink-900/30 backdrop-blur-sm rounded-lg p-3 border border-pink-500/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <i className="ri-shopping-bag-3-line text-pink-400"></i>
-                    <span className="text-white font-bold text-lg">{roomData.furniture.length}</span>
-                  </div>
-                  <p className="text-pink-200 text-xs">가구</p>
-                </div>
-                <div className="bg-blue-900/30 backdrop-blur-sm rounded-lg p-3 border border-blue-500/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <i className="ri-team-line text-blue-400"></i>
-                    <span className="text-white font-bold text-lg">{onlineUsers.length}</span>
-                  </div>
-                  <p className="text-blue-200 text-xs">방문자</p>
-                </div>
-                <div className="bg-yellow-900/30 backdrop-blur-sm rounded-lg p-3 border border-yellow-500/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <i className="ri-emotion-happy-line text-yellow-400"></i>
-                    <span className="text-white font-bold text-lg">{averageHappiness}%</span>
-                  </div>
-                  <p className="text-yellow-200 text-xs">평균 행복도</p>
-                </div>
-              </div>
-            </div>
-
-            {/* 캣룸 푸터 */}
-            <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 backdrop-blur-sm px-6 py-4 border-t border-purple-500/30">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center space-x-2 text-sm text-purple-200">
-                  <i className="ri-information-line"></i>
-                  <span>고양이들이 실시간으로 움직이고 있어요!</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => navigateTo('/catroom')}
-                    className="px-4 py-2 bg-purple-800/50 hover:bg-purple-700/50 text-purple-200 hover:text-white rounded-lg transition-all text-sm"
-                  >
-                    <i className="ri-hammer-line mr-2"></i>
-                    꾸미기
-                  </button>
-                  <button
-                    onClick={() => navigateTo('/catroom')}
-                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all text-sm font-medium"
-                  >
-                    <i className="ri-play-circle-line mr-2"></i>
-                    고양이와 놀기
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
-        </div>
 
-        {/* 추가 정보 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-5xl mx-auto">
-          <div className="bg-gradient-to-br from-purple-900/20 to-purple-900/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20">
-            <div className="w-12 h-12 bg-purple-600/30 rounded-full flex items-center justify-center mb-4">
-              <i className="ri-gift-line text-purple-400 text-2xl"></i>
-            </div>
-            <h3 className="text-white font-bold text-lg mb-2">가구 꾸미기</h3>
-            <p className="text-purple-200 text-sm">
-              다양한 가구로 캣룸을 꾸미고 고양이들의 행복도를 높여보세요
-            </p>
-          </div>
-          <div className="bg-gradient-to-br from-pink-900/20 to-pink-900/10 backdrop-blur-sm rounded-2xl p-6 border border-pink-500/20">
-            <div className="w-12 h-12 bg-pink-600/30 rounded-full flex items-center justify-center mb-4">
-              <i className="ri-heart-line text-pink-400 text-2xl"></i>
-            </div>
-            <h3 className="text-white font-bold text-lg mb-2">고양이 케어</h3>
-            <p className="text-pink-200 text-sm">
-              밥주기, 놀아주기, 쓰다듬기로 고양이들과 교감하세요
-            </p>
-          </div>
-          <div className="bg-gradient-to-br from-blue-900/20 to-blue-900/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
-            <div className="w-12 h-12 bg-blue-600/30 rounded-full flex items-center justify-center mb-4">
-              <i className="ri-team-line text-blue-400 text-2xl"></i>
-            </div>
-            <h3 className="text-white font-bold text-lg mb-2">방문자 교류</h3>
-            <p className="text-blue-200 text-sm">
-              친구들이 방문하면 방명록을 남기고 채팅할 수 있어요
-            </p>
+          {/* Right Sidebar */}
+          <div className="xl:col-span-3 space-y-3">
+            <VisitorList />
+            <GuestBook />
+            <RoomControls
+              isDecorating={isDecorating}
+              onAddFurniture={handleAddFurniture}
+              onRemoveFurniture={handleRemoveFurniture}
+              coins={coins}
+              isVisitor={false}
+            />
+            <ChatSystem onlineUsers={onlineUsers} />
           </div>
         </div>
       </div>
