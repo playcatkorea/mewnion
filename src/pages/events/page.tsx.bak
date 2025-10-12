@@ -1,0 +1,354 @@
+
+import { useState } from 'react';
+import Header from '../../components/feature/Header';
+import Footer from '../../components/feature/Footer';
+
+interface Event {
+  id: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status: 'ongoing' | 'upcoming' | 'ended';
+  category: string;
+  participants: number;
+  maxParticipants?: number;
+  image: string;
+  rewards: string[];
+}
+
+export default function EventsPage() {
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+  
+  const categories = ['전체', '캣룸 꾸미기', '창작 대회', '구조 캠페인', '커뮤니티', '게임', '교육'];
+  
+  const events: Event[] = [
+    {
+      id: 1,
+      title: '신년 특별 캣룸 꾸미기 대회',
+      description: '새해를 맞아 가장 창의적이고 아름다운 캣룸을 꾸며보세요! 우주 고양이별에서 펼쳐지는 특별한 인테리어 대회입니다.',
+      startDate: '2024-01-15',
+      endDate: '2024-02-14',
+      status: 'ongoing',
+      category: '캣룸 꾸미기',
+      participants: 2847,
+      maxParticipants: 5000,
+      image: 'https://readdy.ai/api/search-image?query=cute%20pixel%20art%20cat%20room%20interior%20design%20with%20space%20theme%20colorful%20furniture%20and%20decorations%20cozy%20atmosphere&width=400&height=250&seq=event1&orientation=landscape',
+      rewards: ['1등: 프리미엄 캣룸 아이템 세트', '2등: 한정판 우주 고양이 NFT', '3등: 뮤틀러 AI 홈캠 1년 무료']
+    },
+    {
+      id: 2,
+      title: '길고양이 구조 영웅 캠페인',
+      description: '추운 겨울을 나는 길고양이들을 위한 특별 구조 캠페인입니다. 함께 생명을 구해주세요.',
+      startDate: '2024-01-01',
+      endDate: '2024-03-31',
+      status: 'ongoing',
+      category: '구조 캠페인',
+      participants: 15420,
+      image: 'https://readdy.ai/api/search-image?query=heartwarming%20scene%20of%20rescued%20street%20cats%20in%20warm%20shelter%20with%20volunteers%20caring%20for%20them%20winter%20rescue%20campaign&width=400&height=250&seq=event2&orientation=landscape',
+      rewards: ['구조 배지', '감사 인증서', '길고양이 후원 NFT']
+    },
+    {
+      id: 3,
+      title: '퍼니버스 창작 콘테스트',
+      description: '퍼니버스 세계관을 배경으로 한 창작물을 공모합니다. 소설, 웹툰, 일러스트 등 다양한 장르 환영!',
+      startDate: '2024-02-01',
+      endDate: '2024-04-30',
+      status: 'upcoming',
+      category: '창작 대회',
+      participants: 0,
+      maxParticipants: 1000,
+      image: 'https://readdy.ai/api/search-image?query=creative%20art%20contest%20poster%20with%20space%20cats%20universe%20theme%20digital%20art%20illustration%20colorful%20cosmic%20background&width=400&height=250&seq=event3&orientation=landscape',
+      rewards: ['대상: 상금 500만원', '우수상: 작품 NFT화 지원', '참가상: 창작자 굿즈 세트']
+    },
+    {
+      id: 4,
+      title: '뮤틀러 AI 베타 테스터 모집',
+      description: '차세대 고양이 AI 분석 도구의 베타 테스터를 모집합니다. 새로운 기능을 먼저 체험해보세요!',
+      startDate: '2024-01-20',
+      endDate: '2024-02-20',
+      status: 'ongoing',
+      category: '교육',
+      participants: 892,
+      maxParticipants: 1000,
+      image: 'https://readdy.ai/api/search-image?query=futuristic%20AI%20technology%20interface%20with%20cute%20cat%20analysis%20dashboard%20beta%20testing%20program%20modern%20design&width=400&height=250&seq=event4&orientation=landscape',
+      rewards: ['베타 테스터 배지', '정식 출시 시 50% 할인', '피드백 기여도에 따른 추가 혜택']
+    },
+    {
+      id: 5,
+      title: '집사 사진 콘테스트',
+      description: '우리 고양이의 가장 귀여운 순간을 포착해주세요! 매월 진행되는 사진 콘테스트입니다.',
+      startDate: '2024-01-01',
+      endDate: '2024-01-31',
+      status: 'ended',
+      category: '커뮤니티',
+      participants: 3247,
+      image: 'https://readdy.ai/api/search-image?query=adorable%20cat%20photography%20contest%20with%20multiple%20cute%20cats%20in%20different%20poses%20professional%20photo%20competition&width=400&height=250&seq=event5&orientation=landscape',
+      rewards: ['월간 우승자: 프리미엄 사료 1년치', '주간 우승자: 고양이 장난감 세트', '참가자 전원: 디지털 액자']
+    },
+    {
+      id: 6,
+      title: 'PLAYCAT 신제품 체험단',
+      description: '새롭게 출시되는 PLAYCAT 스마트 급식기를 먼저 체험해보실 분들을 모집합니다.',
+      startDate: '2024-01-10',
+      endDate: '2024-02-10',
+      status: 'ongoing',
+      category: '교육',
+      participants: 567,
+      maxParticipants: 100,
+      image: 'https://readdy.ai/api/search-image?query=modern%20smart%20cat%20feeder%20product%20testing%20with%20happy%20cats%20eating%20high-tech%20pet%20device%20clean%20background&width=400&height=250&seq=event6&orientation=landscape',
+      rewards: ['체험단 선정 시 제품 무료 제공', '리뷰 작성 시 추가 혜택', '우수 리뷰어 정기 체험단 자격']
+    },
+    {
+      id: 7,
+      title: '퍼니버스 게임 토너먼트',
+      description: '길고양이 구조 게임에서 최고의 구조 영웅을 가려보세요! 실력을 겨루는 토너먼트입니다.',
+      startDate: '2024-02-15',
+      endDate: '2024-03-15',
+      status: 'upcoming',
+      category: '게임',
+      participants: 0,
+      maxParticipants: 2048,
+      image: 'https://readdy.ai/api/search-image?query=gaming%20tournament%20poster%20with%20pixel%20art%20cats%20space%20theme%20competitive%20gaming%20event%20colorful%20retro%20style&width=400&height=250&seq=event7&orientation=landscape',
+      rewards: ['우승: 한정판 게임 NFT', '준우승: 게임 내 특별 아이템', '참가자: 토너먼트 기념 배지']
+    },
+    {
+      id: 8,
+      title: '고양이 행동학 무료 강의',
+      description: '전문 수의사와 함께하는 고양이 행동학 온라인 강의를 무료로 제공합니다.',
+      startDate: '2024-01-25',
+      endDate: '2024-02-25',
+      status: 'ongoing',
+      category: '교육',
+      participants: 1234,
+      maxParticipants: 500,
+      image: 'https://readdy.ai/api/search-image?query=online%20education%20class%20about%20cat%20behavior%20with%20veterinarian%20teaching%20professional%20educational%20content&width=400&height=250&seq=event8&orientation=landscape',
+      rewards: ['수료증 발급', '강의 자료 제공', '1:1 상담 기회']
+    },
+    {
+      id: 9,
+      title: '묘연 아트 갤러리 오픈',
+      description: '집사들의 창작물을 전시하는 온라인 갤러리가 오픈됩니다. 여러분의 작품을 선보여주세요!',
+      startDate: '2024-02-01',
+      endDate: '2024-12-31',
+      status: 'upcoming',
+      category: '창작 대회',
+      participants: 0,
+      image: 'https://readdy.ai/api/search-image?query=virtual%20art%20gallery%20with%20cat%20themed%20artworks%20digital%20exhibition%20space%20modern%20gallery%20interior&width=400&height=250&seq=event9&orientation=landscape',
+      rewards: ['전시 작가 인증', '작품 NFT화 지원', '갤러리 수익 배분']
+    },
+    {
+      id: 10,
+      title: '집사 커뮤니티 밋업',
+      description: '전국 각지의 집사들이 모여 정보를 나누고 친목을 다지는 오프라인 모임입니다.',
+      startDate: '2024-03-01',
+      endDate: '2024-03-31',
+      status: 'upcoming',
+      category: '커뮤니티',
+      participants: 0,
+      maxParticipants: 200,
+      image: 'https://readdy.ai/api/search-image?query=cat%20lovers%20community%20meetup%20event%20with%20people%20and%20cats%20socializing%20friendly%20gathering%20atmosphere&width=400&height=250&seq=event10&orientation=landscape',
+      rewards: ['참가 기념품', '네트워킹 기회', '지역별 커뮤니티 가입']
+    },
+    {
+      id: 11,
+      title: '블록체인 후원 투명성 체험',
+      description: '블록체인 기술로 구현된 투명한 후원 시스템을 직접 체험해보세요.',
+      startDate: '2024-01-15',
+      endDate: '2024-02-15',
+      status: 'ongoing',
+      category: '교육',
+      participants: 678,
+      image: 'https://readdy.ai/api/search-image?query=blockchain%20transparency%20dashboard%20with%20donation%20tracking%20system%20modern%20interface%20technology&width=400&height=250&seq=event11&orientation=landscape',
+      rewards: ['체험 완료 NFT', '투명성 리포트', '우선 후원 기회']
+    },
+    {
+      id: 12,
+      title: '캣룸 인테리어 워크샵',
+      description: '전문 디자이너와 함께하는 캣룸 인테리어 온라인 워크샵입니다.',
+      startDate: '2024-02-10',
+      endDate: '2024-02-24',
+      status: 'upcoming',
+      category: '교육',
+      participants: 0,
+      maxParticipants: 150,
+      image: 'https://readdy.ai/api/search-image?query=interior%20design%20workshop%20for%20cat%20rooms%20with%20designer%20teaching%20online%20class%20creative%20space%20planning&width=400&height=250&seq=event12&orientation=landscape',
+      rewards: ['디자인 가이드북', '1:1 컨설팅', '우수 작품 전시']
+    },
+    {
+      id: 13,
+      title: '길고양이 TNR 봉사활동',
+      description: 'TNR(중성화 후 방사) 봉사활동에 참여하여 길고양이 개체수 조절에 도움을 주세요.',
+      startDate: '2024-01-01',
+      endDate: '2024-12-31',
+      status: 'ongoing',
+      category: '구조 캠페인',
+      participants: 892,
+      image: 'https://readdy.ai/api/search-image?query=TNR%20volunteer%20activity%20with%20veterinarians%20helping%20street%20cats%20medical%20care%20compassionate%20rescue%20work&width=400&height=250&seq=event13&orientation=landscape',
+      rewards: ['봉사 시간 인증', 'TNR 전문가 교육', '봉사자 네트워크 가입']
+    },
+    {
+      id: 14,
+      title: '묘연 굿즈 디자인 공모전',
+      description: '묘연의 새로운 굿즈 디자인을 공모합니다. 여러분의 창의적인 아이디어를 기다립니다!',
+      startDate: '2024-03-01',
+      endDate: '2024-04-30',
+      status: 'upcoming',
+      category: '창작 대회',
+      participants: 0,
+      image: 'https://readdy.ai/api/search-image?query=merchandise%20design%20contest%20with%20cute%20cat%20themed%20products%20creative%20design%20competition%20colorful%20items&width=400&height=250&seq=event14&orientation=landscape',
+      rewards: ['채택 시 로열티 지급', '한정판 굿즈 제작', '디자이너 크레딧']
+    },
+    {
+      id: 15,
+      title: '고양이 건강 체크업 이벤트',
+      description: '전국 파트너 동물병원에서 진행하는 무료 건강 체크업 이벤트입니다.',
+      startDate: '2024-02-01',
+      endDate: '2024-02-29',
+      status: 'upcoming',
+      category: '교육',
+      participants: 0,
+      maxParticipants: 1000,
+      image: 'https://readdy.ai/api/search-image?query=veterinary%20health%20checkup%20for%20cats%20with%20professional%20vet%20examining%20cute%20cat%20medical%20care&width=400&height=250&seq=event15&orientation=landscape',
+      rewards: ['무료 건강 검진', '건강 리포트', '맞춤 케어 가이드']
+    }
+  ];
+
+  const filteredEvents = selectedCategory === '전체' 
+    ? events 
+    : events.filter(event => event.category === selectedCategory);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'ongoing': return 'bg-green-100 text-green-800';
+      case 'upcoming': return 'bg-blue-100 text-blue-800';
+      case 'ended': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'ongoing': return '진행중';
+      case 'upcoming': return '예정';
+      case 'ended': return '종료';
+      default: return '알 수 없음';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      <main className="pt-16">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-[#7e5bef] to-[#f6b73c] py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl font-bold text-white mb-4">이벤트</h1>
+            <p className="text-xl text-white/90">묘연에서 진행하는 다양한 이벤트에 참여해보세요</p>
+          </div>
+        </section>
+
+        {/* Category Filter */}
+        <section className="py-8 bg-white border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedCategory === category
+                      ? 'bg-[#7e5bef] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Events Grid */}
+        <section className="py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredEvents.map((event) => (
+                <div key={event.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="relative">
+                    <img 
+                      src={event.image} 
+                      alt={event.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(event.status)}`}>
+                        {getStatusText(event.status)}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">
+                        {event.category}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {event.startDate} ~ {event.endDate}
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-[#7e5bef] transition-colors">
+                      {event.title}
+                    </h3>
+                    
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                      {event.description}
+                    </p>
+                    
+                    {event.maxParticipants && (
+                      <div className="mb-4">
+                        <div className="flex justify-between text-sm text-gray-600 mb-1">
+                          <span>참가자</span>
+                          <span>{event.participants.toLocaleString()} / {event.maxParticipants.toLocaleString()}</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-[#7e5bef] h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${Math.min((event.participants / event.maxParticipants) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="mb-4">
+                      <h4 className="text-sm font-medium text-gray-900 mb-2">혜택</h4>
+                      <ul className="text-xs text-gray-600 space-y-1">
+                        {event.rewards.slice(0, 2).map((reward, index) => (
+                          <li key={index} className="flex items-center">
+                            <i className="ri-gift-line mr-2 text-[#7e5bef]"></i>
+                            {reward}
+                          </li>
+                        ))}
+                        {event.rewards.length > 2 && (
+                          <li className="text-[#7e5bef]">+{event.rewards.length - 2}개 더</li>
+                        )}
+                      </ul>
+                    </div>
+                    
+                    <button className="w-full bg-[#7e5bef] text-white py-2 px-4 rounded-lg hover:bg-[#6d4fd6] transition-colors text-sm font-medium">
+                      {event.status === 'ongoing' ? '참여하기' : event.status === 'upcoming' ? '알림 설정' : '결과 보기'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

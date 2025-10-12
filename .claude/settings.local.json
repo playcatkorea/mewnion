@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Select-Object ProcessName, Id)",
+      "Bash(test:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(wrangler:*)",
+      "Bash(npm install:*)",
+      "Bash(echo $SHELL)",
+      "Bash(npm run deploy)",
+      "Bash(for dir in support partnership developers api careers investors privacy terms)",
+      "Bash(do echo \"=== $dir ===\")",
+      "Bash(ls:*)",
+      "Bash(done)",
+      "Bash(do echo \"=== $dir/page.tsx ===\")",
+      "Bash(npx wrangler pages deploy:*)",
+      "Bash(dir:*)",
+      "Bash(vercel:*)",
+      "Bash(git init:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(Get-ChildItem -Path . -Recurse -Force -Name \"nul\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -First 10)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\Users\\playc\\.claude"
+    ]
+  }
+}
