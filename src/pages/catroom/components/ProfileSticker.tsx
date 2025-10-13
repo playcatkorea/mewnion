@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../../context/AuthContext';
+import { supabase } from '../../../lib/supabase';
 
 interface ProfileData {
   nickname: string;
@@ -10,7 +12,8 @@ interface ProfileData {
 }
 
 export default function ProfileSticker() {
-  const [profile] = useState<ProfileData>({
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<ProfileData>({
     nickname: '냥집사',
     level: 15,
     mood: '행복함 😊',
@@ -18,6 +21,35 @@ export default function ProfileSticker() {
     todayVisitors: 42,
     totalVisitors: 1337
   });
+
+  // 사용자 프로필 로드
+  useEffect(() => {
+    if (!user) return;
+
+    const loadProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('username, bio')
+          .eq('id', user.id)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          setProfile(prev => ({
+            ...prev,
+            nickname: data.username || prev.nickname,
+            statusMessage: data.bio || prev.statusMessage
+          }));
+        }
+      } catch (error) {
+        console.error('프로필 로드 실패:', error);
+      }
+    };
+
+    loadProfile();
+  }, [user]);
 
   const [isEditing, setIsEditing] = useState(false);
 

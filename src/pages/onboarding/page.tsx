@@ -45,7 +45,7 @@ export default function OnboardingPage() {
 
   // 프로필 정보 상태
   const [profileData, setProfileData] = useState<ProfileData>({
-    display_name: '',
+    display_name: '', // username으로 자동 설정됨
     bio: '',
     gender: '',
     birth_date: '',
@@ -134,6 +134,8 @@ export default function OnboardingPage() {
     setLoading(true);
     try {
       await setUsername(username);
+      // 닉네임을 display_name으로도 설정
+      setProfileData(prev => ({ ...prev, display_name: username }));
       setCurrentStep('profile');
       showFeedback('닉네임이 설정되었습니다!');
     } catch (error) {
@@ -144,17 +146,11 @@ export default function OnboardingPage() {
   };
 
   const handleProfileSubmit = async () => {
-    if (!profileData.display_name) {
-      showFeedback('이름을 입력해주세요', 'error');
-      return;
-    }
-
     setLoading(true);
     try {
       const { error } = await supabase
         .from('profiles')
         .update({
-          display_name: profileData.display_name,
           bio: profileData.bio,
           gender: profileData.gender || null,
           birth_date: profileData.birth_date || null,
@@ -376,21 +372,17 @@ export default function OnboardingPage() {
                 </div>
 
                 <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-bold mb-2 terminal-text">
-                      이름 (표시될 이름) *
+                  {/* 닉네임 표시 (읽기 전용) */}
+                  <div className="border-2 p-4" style={{ borderColor: '#00ff00', background: '#000033' }}>
+                    <label className="block text-sm font-bold mb-2 terminal-text" style={{ color: '#00ffff' }}>
+                      닉네임 (캣룸에서 표시될 이름)
                     </label>
-                    <input
-                      type="text"
-                      value={profileData.display_name}
-                      onChange={(e) =>
-                        setProfileData({ ...profileData, display_name: e.target.value })
-                      }
-                      required
-                      className="w-full px-4 py-3 border-2 rounded-none focus:outline-none terminal-text"
-                      style={{ background: '#000033', borderColor: '#00ff00', color: '#00ff00' }}
-                      placeholder="홍길동"
-                    />
+                    <p className="text-lg font-bold terminal-text blink" style={{ color: '#ffff00' }}>
+                      {profileData.display_name || username}
+                    </p>
+                    <p className="text-xs terminal-text mt-1" style={{ color: '#00ffff' }}>
+                      * 닉네임은 변경할 수 없습니다
+                    </p>
                   </div>
 
                   <div>
@@ -436,7 +428,7 @@ export default function OnboardingPage() {
                     size="lg"
                     onClick={handleProfileSubmit}
                     className="w-full retro-button"
-                    disabled={loading || !profileData.display_name}
+                    disabled={loading}
                   >
                     <i className="ri-arrow-right-line mr-2"></i>
                     {loading ? 'SAVING...' : '[ENTER] 다음 단계'}
