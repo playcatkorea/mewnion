@@ -65,14 +65,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 유저 프로필 로드
   const loadUserProfile = async (supabaseUser: User) => {
     try {
-      const { data: profile, error } = await supabase
+      // 타임아웃 설정 (3초)
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('프로필 로드 타임아웃')), 3000)
+      );
+
+      const profilePromise = supabase
         .from('profiles')
-        .select('*')
+        .select('username, avatar_url')
         .eq('id', supabaseUser.id)
-        .single();
+        .maybeSingle();
+
+      const { data: profile, error } = await Promise.race([
+        profilePromise,
+        timeoutPromise
+      ]) as any;
 
       if (error && error.code !== 'PGRST116') {
-        throw error;
+        console.warn('프로필 로드 오류:', error);
       }
 
       const authUser: AuthUser = {
@@ -86,6 +96,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(authUser);
     } catch (error) {
       console.error('프로필 로드 실패:', error);
+      // 프로필 로드 실패해도 기본 정보로 로그인 처리
+      const authUser: AuthUser = {
+        id: supabaseUser.id,
+        name: supabaseUser.email?.split('@')[0] || 'User',
+        email: supabaseUser.email || '',
+        username: undefined,
+        avatar_url: supabaseUser.user_metadata?.avatar_url,
+      };
+      setUser(authUser);
     } finally {
       setLoading(false);
     }

@@ -15,40 +15,46 @@ export default function AuthCallbackPage() {
         }
 
         if (data.session) {
-          // 프로필이 있는지 확인
+          // 프로필 확인과 동시에 처리
           const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('username, onboarding_completed')
             .eq('id', data.session.user.id)
             .maybeSingle();
 
-          // 프로필이 없으면 생성 (Google OAuth로 처음 로그인하는 경우)
+          // 프로필이 없으면 생성 후 바로 온보딩으로 (Google OAuth로 처음 로그인)
           if (!profile && !profileError) {
-            const { error: insertError } = await supabase
+            // 프로필 생성은 백그라운드로 (await 제거)
+            supabase
               .from('profiles')
               .insert({
                 id: data.session.user.id,
                 email: data.session.user.email,
                 username: null,
                 onboarding_completed: false,
+              })
+              .then(({ error: insertError }) => {
+                if (insertError && insertError.code !== '23505') {
+                  console.error('프로필 생성 실패:', insertError);
+                }
               });
 
-            if (insertError && insertError.code !== '23505') {
-              console.error('프로필 생성 실패:', insertError);
-            }
-
-            // 온보딩 페이지로
+            // 즉시 온보딩으로 이동
             showFeedback('환영합니다! 프로필을 설정해주세요');
             navigateTo('/onboarding');
-          } else if (!profile?.username || !profile?.onboarding_completed) {
-            // 프로필은 있지만 온보딩이 완료되지 않은 경우
+            return;
+          }
+
+          // 온보딩 미완료 시
+          if (!profile?.username || !profile?.onboarding_completed) {
             showFeedback('프로필 설정을 완료해주세요');
             navigateTo('/onboarding');
-          } else {
-            // 모든 설정이 완료된 경우
-            showFeedback('로그인 성공!');
-            navigateTo('/');
+            return;
           }
+
+          // 모든 설정 완료
+          showFeedback('로그인 성공!');
+          navigateTo('/');
         } else {
           showFeedback('인증 실패', 'error');
           navigateTo('/login');

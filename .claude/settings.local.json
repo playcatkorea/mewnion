@@ -21,7 +21,14 @@
       "Bash(git config:*)",
       "Bash(git add:*)",
       "Bash(Get-ChildItem -Path . -Recurse -Force -Name \"nul\" -ErrorAction SilentlyContinue)",
-      "Bash(Select-Object -First 10)"
+      "Bash(Select-Object -First 10)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(curl -X POST \"https://api.vercel.com/v1/integrations/deploy/prj_ZyFMYPSSfVqXC0MGR3lCmQtvVWFH/QIaJxkuviy\")",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": [],
