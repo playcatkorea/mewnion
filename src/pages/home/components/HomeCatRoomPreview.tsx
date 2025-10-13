@@ -316,39 +316,39 @@ export default function HomeCatRoomPreview() {
   }, []);
 
   return (
-    <section className="w-full min-h-screen bg-gradient-to-br from-[#0a0a23] via-[#1a1a3a] to-[#2a1a4a] py-6">
+    <section className="w-full bg-gradient-to-br from-[#0a0a23] via-[#1a1a3a] to-[#2a1a4a] py-4">
       {/* 알림 */}
       {notification && (
-        <div className="fixed top-4 right-4 z-50 bg-[#f6b73c] text-white px-4 py-2 rounded-lg shadow-lg animate-bounce">
+        <div className="fixed top-20 right-4 z-50 bg-[#f6b73c] text-white px-4 py-2 rounded-lg shadow-lg animate-bounce">
           {notification}
         </div>
       )}
 
       {/* 컴팩트 헤더 */}
-      <div className="bg-black/40 backdrop-blur-sm border-b border-purple-500/30">
-        <div className="max-w-[1600px] mx-auto px-4 py-3">
+      <div className="bg-black/40 backdrop-blur-sm border-y border-purple-500/30">
+        <div className="max-w-[1600px] mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-white font-bold flex items-center">
+            <h2 className="text-white font-bold flex items-center text-sm">
               <i className="ri-home-heart-fill text-[#f6b73c] mr-2"></i>
-              내 캣룸 - 로그인한 사용자에게 표시
+              내 캣룸
             </h2>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               <button
                 onClick={() => setIsDecorating(!isDecorating)}
-                className={`px-3 py-1.5 rounded-lg font-medium transition-colors text-sm ${
+                className={`px-2.5 py-1 rounded-lg font-medium transition-colors text-xs ${
                   isDecorating
                     ? 'bg-[#f6b73c] text-white shadow-lg'
                     : 'bg-purple-800/50 text-purple-200 hover:bg-purple-700/50'
                 }`}
               >
-                <i className="ri-hammer-line mr-1.5"></i>
+                <i className="ri-hammer-line mr-1"></i>
                 {isDecorating ? '완료' : '꾸미기'}
               </button>
               <button
                 onClick={() => navigateTo('/catroom')}
-                className="px-4 py-2 bg-gradient-to-r from-[#f6b73c] to-[#ff6b6b] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all text-sm"
+                className="px-3 py-1 bg-gradient-to-r from-[#f6b73c] to-[#ff6b6b] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all text-xs"
               >
-                <i className="ri-fullscreen-line mr-2"></i>
+                <i className="ri-fullscreen-line mr-1"></i>
                 전체화면
               </button>
             </div>
@@ -356,10 +356,10 @@ export default function HomeCatRoomPreview() {
         </div>
       </div>
 
-      <div className="max-w-[1800px] mx-auto px-3 py-3">
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-3">
+      <div className="max-w-[1600px] mx-auto px-3 py-3">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-2">
           {/* Left Sidebar */}
-          <div className="xl:col-span-3 space-y-3">
+          <div className="xl:col-span-3 space-y-2">
             <ProfileSticker />
             <CharacterStats
               cats={roomData.cats}
@@ -367,7 +367,7 @@ export default function HomeCatRoomPreview() {
               onInteraction={handleCatInteraction}
             />
             <MinimiPlayer />
-            <div className="bg-gradient-to-br from-yellow-900/60 to-orange-900/60 backdrop-blur-sm rounded-2xl p-3 border border-yellow-500/30">
+            <div className="bg-gradient-to-br from-yellow-900/60 to-orange-900/60 backdrop-blur-sm rounded-xl p-2.5 border border-yellow-500/30">
               <h3 className="text-white font-bold mb-2 text-xs flex items-center">
                 <i className="ri-copper-coin-line text-yellow-400 mr-1.5"></i>
                 코인 채굴
@@ -400,11 +400,11 @@ export default function HomeCatRoomPreview() {
 
           {/* Main Cat Room */}
           <div className="xl:col-span-6 flex flex-col">
-            <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-3 border border-purple-500/30 flex-1 flex flex-col">
-              <div className="flex items-center justify-between mb-2">
-                <h1 className="text-lg font-bold text-white flex items-center">
-                  <i className="ri-home-heart-fill text-[#f6b73c] mr-2"></i>
-                  내 캣룸
+            <div className="bg-black/40 backdrop-blur-sm rounded-xl p-2.5 border border-purple-500/30 flex-1 flex flex-col min-h-[500px]">
+              <div className="flex items-center justify-between mb-1.5">
+                <h1 className="text-base font-bold text-white flex items-center">
+                  <i className="ri-home-heart-fill text-[#f6b73c] mr-1.5"></i>
+                  캣룸
                 </h1>
                 <div className="text-purple-300 text-xs">
                   <i className="ri-map-pin-line mr-1"></i>
@@ -427,7 +427,7 @@ export default function HomeCatRoomPreview() {
           </div>
 
           {/* Right Sidebar */}
-          <div className="xl:col-span-3 space-y-3">
+          <div className="xl:col-span-3 space-y-2">
             <VisitorList />
             <GuestBook />
             <RoomControls
