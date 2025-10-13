@@ -23,8 +23,8 @@ export default function Home() {
       <Header />
       <main className="w-full">
         <HeroSection />
-        <FurniverseSection />
         {isAuthenticated && <HomeCatRoomPreview />}
+        <FurniverseSection />
         <FurniverseMapSection />
         <PlayFactorySection />
         <MewtlerSection />

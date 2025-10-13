@@ -357,7 +357,7 @@ export default function HomeCatRoomPreview() {
       </div>
 
       <div className="max-w-[1600px] mx-auto px-3 py-3">
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-2">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-2 items-start">
           {/* Left Sidebar */}
           <div className="xl:col-span-3 space-y-2">
             <ProfileSticker />
