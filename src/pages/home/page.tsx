@@ -2,7 +2,6 @@
 import Header from '../../components/feature/Header';
 import Footer from '../../components/feature/Footer';
 import HeroSection from './components/HeroSection';
-import MyCatRoomSection from './components/MyCatRoomSection';
 import FurniverseSection from './components/FurniverseSection';
 import PlayFactorySection from './components/PlayFactorySection';
 import MewtlerSection from './components/MewtlerSection';
@@ -23,9 +22,8 @@ export default function Home() {
       <Header />
       <main className="w-full">
         <HeroSection />
-        {isAuthenticated && <HomeCatRoomPreview />}
-        <MyCatRoomSection />
         <FurniverseSection />
+        {isAuthenticated && <HomeCatRoomPreview />}
         <PlayFactorySection />
         <MewtlerSection />
         <ShelterSection />
