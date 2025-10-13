@@ -3,6 +3,7 @@ import Header from '../../components/feature/Header';
 import Footer from '../../components/feature/Footer';
 import HeroSection from './components/HeroSection';
 import FurniverseSection from './components/FurniverseSection';
+import FurniverseMapSection from './components/FurniverseMapSection';
 import PlayFactorySection from './components/PlayFactorySection';
 import MewtlerSection from './components/MewtlerSection';
 import ShelterSection from './components/ShelterSection';
@@ -24,6 +25,7 @@ export default function Home() {
         <HeroSection />
         <FurniverseSection />
         {isAuthenticated && <HomeCatRoomPreview />}
+        <FurniverseMapSection />
         <PlayFactorySection />
         <MewtlerSection />
         <ShelterSection />
