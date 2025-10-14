@@ -80,164 +80,232 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen w-full crt-effect" style={{background: '#000033'}}>
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0a23] via-[#1a1a3a] to-[#2a1a4a]">
       <Header />
-      <main className="pt-16 lg:pt-20 px-4 py-16">
-        <div className="max-w-5xl mx-auto rounded-none shadow-2xl overflow-hidden" style={{background: '#001133', border: '4px solid #00ff00'}}>
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="p-10 flex flex-col justify-between" style={{background: '#0000aa', borderRight: '4px solid #00ff00'}}>
-              <div>
-                <div className="text-6xl mb-4" style={{filter: 'drop-shadow(0 0 20px #00ff00)'}}>🐱</div>
-                <h1 className="text-4xl font-bold mb-4 terminal-text blink">MEWNION SIGNUP</h1>
-                <p className="leading-relaxed" style={{color: '#00ffff'}}>
-                  퍼니버스, 길구넷, 크리에이터 마켓, 뮤틀러 AI까지
-                  하나의 Mewnion ID로 연결됩니다.
-                </p>
-              </div>
-              <div className="space-y-4 mt-10 p-4 border-2" style={{borderColor: '#00ff00', background: '#000033'}}>
-                {[
-                  '커뮤니티 활동과 후원 내역을 한 번에 관리',
-                  '뮤틀러 AI, PoD 리워드 자동 연동',
-                  '굿즈 · NFT 마켓 크리에이터 온보딩',
-                  'DAO 투표 및 Web3 참여 자격 부여'
-                ].map((value, idx) => (
-                  <div key={value} className="flex items-start">
-                    <div className="mr-3 font-bold" style={{color: '#ffff00'}}>
-                      [{idx + 1}]
-                    </div>
-                    <p className="text-sm leading-relaxed terminal-text">{value}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-10 text-sm" style={{color: '#00ffff'}}>
-                이미 계정이 있다면{' '}
-                <button
-                  type="button"
-                  className="underline terminal-text"
-                  onClick={() => navigateTo('/login')}
-                >
-                  로그인
-                </button>
-                으로 이동하세요.
-              </div>
-            </div>
-            <div className="p-10" style={{background: '#001133'}}>
-              <form className="space-y-5" onSubmit={handleSubmit}>
-                <h2 className="text-2xl font-bold mb-4 terminal-text">{'>>>'} REGISTER</h2>
 
-                {/* Google 회원가입 */}
-                <button
-                  type="button"
-                  onClick={handleGoogleSignup}
-                  disabled={loading}
-                  className="w-full px-6 py-4 border-2 rounded-none hover:bg-opacity-80 transition-colors flex items-center justify-center"
-                  style={{background: '#fff', borderColor: '#4285f4', color: '#000'}}
-                >
-                  <i className="ri-google-fill mr-2 text-lg"></i>
-                  Google로 회원가입
-                </button>
+      {/* Pixel Art Background */}
+      <div
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: `url('https://readdy.ai/api/search-image?query=Pixel%20art%20style%20cute%20cat%20universe%20with%20floating%20cat%20planets%2C%208-bit%20retro%20gaming%20aesthetic%2C%20colorful%20space%20cats%20floating%20among%20pixelated%20stars%20and%20planets%2C%20purple%20and%20golden%20cosmic%20background%2C%20low%20resolution%20pixel%20graphics%2C%20nostalgic%20arcade%20game%20style%2C%20kawaii%20space%20cats%2C%20minimalist%20pixel%20design%2C%20vibrant%20colors%2C%20retro%20gaming%20atmosphere&width=1920&height=1080&seq=pixel-universe&orientation=landscape')`
+        }}
+      />
 
-                <div className="flex items-center my-4">
-                  <div className="flex-1 border-t-2" style={{borderColor: '#00ff00'}}></div>
-                  <span className="px-4 terminal-text">OR</span>
-                  <div className="flex-1 border-t-2" style={{borderColor: '#00ff00'}}></div>
+      {/* Pixel Stars Animation */}
+      <div className="fixed inset-0 pointer-events-none">
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
+            }}
+          >
+            <div className="w-2 h-2 bg-yellow-300 opacity-60" style={{ clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }}></div>
+          </div>
+        ))}
+      </div>
+
+      <main className="relative pt-20 lg:pt-24 flex items-center justify-center px-4 py-12 min-h-screen">
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-black/40 backdrop-blur-sm border-2 border-purple-500/30 rounded-2xl shadow-2xl">
+
+          {/* Left Side - Welcome Section */}
+          <div className="relative p-8 lg:p-12 flex flex-col justify-between bg-gradient-to-br from-purple-900/50 to-pink-900/50">
+            <div className="flex-1 flex flex-col items-center justify-center text-center">
+              {/* Animated Cat Icon */}
+              <div className="relative mb-6">
+                <div className="w-24 h-24 bg-gradient-to-br from-[#f6b73c] to-[#7e5bef] rounded-2xl flex items-center justify-center shadow-2xl animate-bounce border-4 border-white/20">
+                  <i className="ri-heart-3-fill text-white text-4xl"></i>
                 </div>
+                <div className="absolute -inset-3 bg-gradient-to-br from-[#f6b73c]/20 to-[#7e5bef]/20 rounded-2xl animate-ping"></div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-bold mb-2 terminal-text">EMAIL:</label>
+              <h2 className="text-4xl lg:text-5xl font-bold mb-4 pixel-font">
+                <span className="bg-gradient-to-r from-[#f6b73c] to-[#7e5bef] bg-clip-text text-transparent">
+                  FURNIVERSE
+                </span>
+              </h2>
+              <div className="w-20 h-1 bg-gradient-to-r from-[#f6b73c] to-[#7e5bef] rounded-full mb-4"></div>
+              <p className="text-lg text-purple-100 leading-relaxed mb-4">
+                우주 고양이들의 세계에<br />오신 것을 환영합니다
+              </p>
+              <p className="text-sm text-purple-300">
+                하나의 Mewnion ID로<br />모든 서비스를 이용하세요
+              </p>
+            </div>
+
+            {/* Benefits Box */}
+            <div className="mt-8 space-y-3">
+              {[
+                { icon: 'ri-home-heart-line', text: '나만의 우주 고양이별 캣룸' },
+                { icon: 'ri-palette-line', text: 'NFT 아트 & 크리에이터 마켓' },
+                { icon: 'ri-robot-line', text: '뮤틀러 AI 맞춤 콘텐츠' },
+                { icon: 'ri-trophy-line', text: 'DAO 투표 & 리워드 시스템' }
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center p-3 rounded-xl bg-black/30 backdrop-blur-sm border border-purple-400/20">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#f6b73c] to-[#7e5bef] flex items-center justify-center mr-3">
+                    <i className={`${item.icon} text-white text-lg`}></i>
+                  </div>
+                  <span className="text-sm text-purple-100">{item.text}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 text-center text-sm text-purple-300">
+              이미 계정이 있다면{' '}
+              <button
+                type="button"
+                className="text-[#f6b73c] hover:text-[#e5a635] font-semibold underline transition-colors"
+                onClick={() => navigateTo('/login')}
+              >
+                로그인
+              </button>
+              하세요
+            </div>
+          </div>
+
+          {/* Right Side - Signup Form */}
+          <div className="p-8 lg:p-12 bg-[#1a1a3a]/80">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold mb-2 text-white">
+                회원가입
+              </h1>
+              <p className="text-purple-300">
+                지금 가입하고 퍼니버스를 경험하세요
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Google Signup Button */}
+              <button
+                type="button"
+                onClick={handleGoogleSignup}
+                disabled={loading}
+                className="w-full px-6 py-4 rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center font-semibold shadow-lg bg-white text-gray-800 border-2 border-transparent hover:border-purple-400"
+              >
+                <i className="ri-google-fill mr-2 text-xl text-[#4285f4]"></i>
+                Google로 회원가입
+              </button>
+
+              {/* Divider */}
+              <div className="flex items-center my-6">
+                <div className="flex-1 border-t border-purple-500/30"></div>
+                <span className="px-4 text-sm text-purple-400">OR</span>
+                <div className="flex-1 border-t border-purple-500/30"></div>
+              </div>
+
+              {/* Email Input */}
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-purple-200">
+                  이메일
+                </label>
+                <div className="relative">
+                  <i className="ri-mail-line absolute left-4 top-1/2 -translate-y-1/2 text-purple-400 text-lg"></i>
                   <input
                     name="email"
                     type="email"
+                    required
                     value={formData.email}
                     onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border-2 rounded-none focus:outline-none terminal-text"
-                    style={{background: '#000033', borderColor: '#00ff00', color: '#00ff00'}}
+                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-black/30 border border-purple-500/30 text-white placeholder-purple-400/50 focus:outline-none focus:border-purple-400 transition-colors"
                     placeholder="your@email.com"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold mb-2 terminal-text">PASSWORD:</label>
+              </div>
+
+              {/* Password Input */}
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-purple-200">
+                  비밀번호 (6자 이상)
+                </label>
+                <div className="relative">
+                  <i className="ri-lock-line absolute left-4 top-1/2 -translate-y-1/2 text-purple-400 text-lg"></i>
                   <input
                     name="password"
                     type="password"
-                    value={formData.password}
-                    onChange={handleChange}
                     required
                     minLength={6}
-                    className="w-full px-4 py-3 border-2 rounded-none focus:outline-none terminal-text"
-                    style={{background: '#000033', borderColor: '#00ff00', color: '#00ff00'}}
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-black/30 border border-purple-500/30 text-white placeholder-purple-400/50 focus:outline-none focus:border-purple-400 transition-colors"
                     placeholder="••••••••"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold mb-2 terminal-text">CONFIRM:</label>
+              </div>
+
+              {/* Confirm Password Input */}
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-purple-200">
+                  비밀번호 확인
+                </label>
+                <div className="relative">
+                  <i className="ri-lock-line absolute left-4 top-1/2 -translate-y-1/2 text-purple-400 text-lg"></i>
                   <input
                     name="confirmPassword"
                     type="password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
                     required
                     minLength={6}
-                    className="w-full px-4 py-3 border-2 rounded-none focus:outline-none terminal-text"
-                    style={{background: '#000033', borderColor: '#00ff00', color: '#00ff00'}}
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-black/30 border border-purple-500/30 text-white placeholder-purple-400/50 focus:outline-none focus:border-purple-400 transition-colors"
                     placeholder="••••••••"
                   />
                 </div>
-                <label className="flex items-start text-sm" style={{color: '#00ffff'}}>
-                  <input
-                    type="checkbox"
-                    name="agree"
-                    checked={formData.agree}
-                    onChange={handleChange}
-                    className="mt-1 mr-2"
-                    style={{accentColor: '#00ff00'}}
-                  />
-                  <span>
-                    묘연의{' '}
-                    <a
-                      href="/terms"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline hover:opacity-80"
-                      style={{color: '#ffff00'}}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.open('/terms', '_blank', 'noopener,noreferrer');
-                      }}
-                    >
-                      이용 약관
-                    </a>
-                    과{' '}
-                    <a
-                      href="/privacy"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline hover:opacity-80"
-                      style={{color: '#ffff00'}}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.open('/privacy', '_blank', 'noopener,noreferrer');
-                      }}
-                    >
-                      개인정보 처리방침
-                    </a>
-                    에 동의합니다.
-                  </span>
-                </label>
+              </div>
 
-                <Button
-                  data-cta="manual"
-                  size="lg"
-                  type="submit"
-                  className="w-full retro-button"
-                  disabled={loading}
-                >
-                  <i className="ri-user-add-line mr-2"></i>
-                  {loading ? 'PROCESSING...' : '[ENTER] 회원가입하기'}
-                </Button>
-              </form>
-            </div>
+              {/* Terms Agreement */}
+              <label className="flex items-start text-sm text-purple-300 cursor-pointer p-4 rounded-xl bg-purple-900/20 border border-purple-500/20">
+                <input
+                  type="checkbox"
+                  name="agree"
+                  checked={formData.agree}
+                  onChange={handleChange}
+                  className="mt-1 mr-3 w-4 h-4 rounded accent-purple-500"
+                />
+                <span>
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#f6b73c] hover:text-[#e5a635] underline transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open('/terms', '_blank', 'noopener,noreferrer');
+                    }}
+                  >
+                    이용약관
+                  </a>
+                  과{' '}
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#f6b73c] hover:text-[#e5a635] underline transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open('/privacy', '_blank', 'noopener,noreferrer');
+                    }}
+                  >
+                    개인정보 처리방침
+                  </a>
+                  에 동의합니다
+                </span>
+              </label>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={loading}
+                size="lg"
+                className="w-full bg-gradient-to-r from-[#f6b73c] to-[#7e5bef] hover:from-[#e5a635] hover:to-[#6d4fd6] text-white font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+              >
+                <i className="ri-user-add-line mr-2"></i>
+                {loading ? '처리 중...' : '회원가입'}
+              </Button>
+            </form>
           </div>
         </div>
       </main>
@@ -307,85 +375,143 @@ function UsernameSetupPage() {
   };
 
   return (
-    <div className="min-h-screen w-full crt-effect" style={{background: '#000033'}}>
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0a23] via-[#1a1a3a] to-[#2a1a4a]">
       <Header />
-      <main className="pt-16 lg:pt-20 px-4 py-16">
-        <div className="max-w-2xl mx-auto rounded-none shadow-2xl overflow-hidden" style={{background: '#001133', border: '4px solid #00ff00'}}>
-          <div className="p-10" style={{background: '#0000aa'}}>
+
+      {/* Pixel Art Background */}
+      <div
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: `url('https://readdy.ai/api/search-image?query=Pixel%20art%20style%20cute%20cat%20universe%20with%20floating%20cat%20planets%2C%208-bit%20retro%20gaming%20aesthetic%2C%20colorful%20space%20cats%20floating%20among%20pixelated%20stars%20and%20planets%2C%20purple%20and%20golden%20cosmic%20background%2C%20low%20resolution%20pixel%20graphics%2C%20nostalgic%20arcade%20game%20style%2C%20kawaii%20space%20cats%2C%20minimalist%20pixel%20design%2C%20vibrant%20colors%2C%20retro%20gaming%20atmosphere&width=1920&height=1080&seq=pixel-universe&orientation=landscape')`
+        }}
+      />
+
+      {/* Pixel Stars Animation */}
+      <div className="fixed inset-0 pointer-events-none">
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
+            }}
+          >
+            <div className="w-2 h-2 bg-yellow-300 opacity-60" style={{ clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }}></div>
+          </div>
+        ))}
+      </div>
+
+      <main className="relative pt-20 lg:pt-24 flex items-center justify-center px-4 py-12 min-h-screen">
+        <div className="w-full max-w-2xl bg-black/40 backdrop-blur-sm border-2 border-purple-500/30 rounded-2xl shadow-2xl overflow-hidden">
+          <div className="p-8 lg:p-12">
             <div className="text-center mb-8">
-              <div className="text-6xl mb-4" style={{filter: 'drop-shadow(0 0 20px #00ff00)'}}>🐱</div>
-              <h1 className="text-3xl font-bold mb-2 terminal-text blink">SETUP USERNAME</h1>
-              <p className="terminal-text" style={{color: '#00ffff'}}>
+              {/* Animated Cat Icon */}
+              <div className="relative inline-block mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#f6b73c] to-[#7e5bef] rounded-2xl flex items-center justify-center shadow-2xl animate-bounce border-4 border-white/20">
+                  <i className="ri-user-star-fill text-white text-3xl"></i>
+                </div>
+                <div className="absolute -inset-2 bg-gradient-to-br from-[#f6b73c]/20 to-[#7e5bef]/20 rounded-2xl animate-ping"></div>
+              </div>
+
+              <h1 className="text-3xl font-bold mb-2 text-white pixel-font">
+                닉네임 설정
+              </h1>
+              <p className="text-purple-300">
                 당신만의 미니홈피 주소를 만들어보세요
               </p>
             </div>
 
-            <form className="space-y-5" onSubmit={handleSubmit}>
-              <div className="border-2 p-6" style={{borderColor: '#ffff00', background: '#000033'}}>
-                <h3 className="text-lg font-bold mb-3 terminal-text" style={{color: '#ffff00'}}>
-                  {'>>>'} 닉네임 규칙
-                </h3>
-                <ul className="space-y-2 text-sm" style={{color: '#00ffff'}}>
-                  <li className="terminal-text">• 영어, 숫자, 언더스코어(_)만 사용 가능</li>
-                  <li className="terminal-text">• 3자 이상</li>
-                  <li className="terminal-text">• 중복 불가</li>
-                  <li className="terminal-text">• 한 번 설정하면 변경 불가</li>
-                </ul>
-              </div>
+            {/* Rules Box */}
+            <div className="mb-6 p-6 rounded-xl bg-gradient-to-br from-purple-900/30 to-pink-900/30 border border-purple-400/30">
+              <h3 className="text-lg font-bold mb-3 text-white flex items-center">
+                <i className="ri-information-line text-yellow-400 mr-2"></i>
+                닉네임 규칙
+              </h3>
+              <ul className="space-y-2 text-sm text-purple-200">
+                <li className="flex items-center">
+                  <i className="ri-arrow-right-s-line text-[#f6b73c] mr-2"></i>
+                  영어, 숫자, 언더스코어(_)만 사용 가능
+                </li>
+                <li className="flex items-center">
+                  <i className="ri-arrow-right-s-line text-[#f6b73c] mr-2"></i>
+                  3자 이상
+                </li>
+                <li className="flex items-center">
+                  <i className="ri-arrow-right-s-line text-[#f6b73c] mr-2"></i>
+                  중복 불가
+                </li>
+                <li className="flex items-center">
+                  <i className="ri-arrow-right-s-line text-red-400 mr-2"></i>
+                  한 번 설정하면 변경 불가
+                </li>
+              </ul>
+            </div>
 
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {/* Username Input */}
               <div>
-                <label className="block text-sm font-bold mb-2 terminal-text">USERNAME:</label>
+                <label className="block text-sm font-semibold mb-2 text-purple-200">
+                  닉네임
+                </label>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => {
-                      setUsernameInput(e.target.value);
-                      setAvailable(null);
-                    }}
-                    required
-                    minLength={3}
-                    pattern="[a-zA-Z0-9_]+"
-                    className="flex-1 px-4 py-3 border-2 rounded-none focus:outline-none terminal-text"
-                    style={{background: '#000033', borderColor: '#00ff00', color: '#00ff00'}}
-                    placeholder="your_username"
-                  />
+                  <div className="relative flex-1">
+                    <i className="ri-user-line absolute left-4 top-1/2 -translate-y-1/2 text-purple-400 text-lg"></i>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => {
+                        setUsernameInput(e.target.value);
+                        setAvailable(null);
+                      }}
+                      required
+                      minLength={3}
+                      pattern="[a-zA-Z0-9_]+"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl bg-black/30 border border-purple-500/30 text-white placeholder-purple-400/50 focus:outline-none focus:border-purple-400 transition-colors"
+                      placeholder="your_username"
+                    />
+                  </div>
                   <Button
                     type="button"
                     onClick={handleCheckUsername}
                     disabled={checking || !username}
-                    className="retro-button px-6"
+                    className="px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500"
                   >
                     {checking ? '확인중...' : '중복확인'}
                   </Button>
                 </div>
                 {available !== null && (
-                  <p className={`mt-2 text-sm terminal-text ${available ? 'text-green-400' : 'text-red-400'}`}>
-                    {available ? '✓ 사용 가능한 닉네임입니다' : '✗ 이미 사용 중인 닉네임입니다'}
+                  <p className={`mt-2 text-sm flex items-center ${available ? 'text-green-400' : 'text-red-400'}`}>
+                    <i className={`${available ? 'ri-checkbox-circle-fill' : 'ri-close-circle-fill'} mr-1`}></i>
+                    {available ? '사용 가능한 닉네임입니다' : '이미 사용 중인 닉네임입니다'}
                   </p>
                 )}
               </div>
 
+              {/* Preview URL */}
               {username && (
-                <div className="border-2 p-4" style={{borderColor: '#00ff00', background: '#000033'}}>
-                  <p className="text-sm terminal-text mb-2" style={{color: '#00ffff'}}>
-                    미니홈피 주소:
+                <div className="p-6 rounded-xl bg-gradient-to-br from-[#f6b73c]/10 to-[#7e5bef]/10 border border-purple-400/30">
+                  <p className="text-sm text-purple-300 mb-2">
+                    미니홈피 주소
                   </p>
-                  <p className="text-lg font-bold terminal-text blink" style={{color: '#ffff00'}}>
+                  <p className="text-lg font-bold text-white flex items-center">
+                    <i className="ri-link mr-2 text-[#f6b73c]"></i>
                     mewnion.io/{username}
                   </p>
                 </div>
               )}
 
+              {/* Submit Button */}
               <Button
-                data-cta="manual"
-                size="lg"
                 type="submit"
-                className="w-full retro-button"
                 disabled={loading || !available}
+                size="lg"
+                className="w-full bg-gradient-to-r from-[#f6b73c] to-[#7e5bef] hover:from-[#e5a635] hover:to-[#6d4fd6] text-white font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <i className="ri-check-line mr-2"></i>
-                {loading ? 'PROCESSING...' : '[ENTER] 완료'}
+                {loading ? '처리 중...' : '완료'}
               </Button>
             </form>
           </div>
