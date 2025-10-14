@@ -1,21 +1,8 @@
 
 import Button from '../../../components/base/Button';
 import { navigateTo } from '../../../router/navigator';
-import { useAuth } from '../../../context/AuthContext';
-import { showFeedback } from '../../../utils/navigation';
 
 export default function HeroSection() {
-  const { isAuthenticated, user } = useAuth();
-
-  const handleCatRoomAccess = () => {
-    if (isAuthenticated) {
-      navigateTo('/catroom');
-    } else {
-      showFeedback('로그인하면 나만의 캣룸을 바로 열 수 있어요!', 'info');
-      navigateTo('/login');
-    }
-  };
-
   return (
     <section id="home" className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#0a0a23] via-[#1a1a3a] to-[#2a1a4a]">
       {/* Pixel Art Universe Background */}
@@ -47,87 +34,6 @@ export default function HeroSection() {
       <div className="relative z-10 w-full min-h-screen flex items-center pt-14 lg:pt-16">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            {/* Cat Room Status */}
-            <div className="mb-8 lg:mb-12">
-              <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-purple-500/30">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[#f6b73c] to-[#7e5bef] rounded-lg flex items-center justify-center">
-                      <i className="ri-home-heart-fill text-white text-xl"></i>
-                    </div>
-                    <div>
-                      <h3 className="text-white font-bold text-lg">
-                        {isAuthenticated ? `${user?.name ?? '나의'} 캣룸` : '캣룸을 열어보세요'}
-                      </h3>
-                      <p className="text-purple-300 text-sm">
-                        {isAuthenticated ? '우주 고양이별 - 지구 서울시' : '로그인하면 나만의 고양이별이 생성돼요'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-yellow-400 font-bold text-lg">
-                      {isAuthenticated ? '레벨 15' : '잠금됨'}
-                    </div>
-                    <div className="text-purple-300 text-sm">
-                      {isAuthenticated ? '행복도 98%' : '로그인이 필요해요'}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                  {[
-                    { icon: 'ri-heart-fill', label: '건강', value: isAuthenticated ? '최고' : '로그인 필요' },
-                    { icon: 'ri-gamepad-fill', label: '놀이', value: isAuthenticated ? '활발' : '로그인 필요' },
-                    { icon: 'ri-restaurant-fill', label: '식사', value: isAuthenticated ? '만족' : '로그인 필요' },
-                    { icon: 'ri-user-heart-fill', label: '애정', value: isAuthenticated ? '최고' : '로그인 필요' },
-                  ].map((item) => (
-                    <div key={item.label} className="bg-purple-900/50 rounded-lg p-3 text-center">
-                      <i
-                        className={`${item.icon} text-xl mb-1 ${
-                          isAuthenticated ? 'text-red-400' : 'text-purple-300'
-                        }`}
-                      ></i>
-                      <div className="text-white text-sm font-medium">{item.label}</div>
-                      <div
-                        className={`text-xs ${
-                          isAuthenticated ? 'text-green-400' : 'text-purple-300'
-                        }`}
-                      >
-                        {item.value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center space-x-4">
-                    {isAuthenticated ? (
-                      <>
-                        <span className="text-purple-300">
-                          오늘 방문자: <span className="text-yellow-400 font-bold">23명</span>
-                        </span>
-                        <span className="text-purple-300">
-                          새 메시지: <span className="text-pink-400 font-bold">5개</span>
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-purple-200">
-                        로그인하면 실시간 방문자와 메시지를 확인할 수 있어요.
-                      </span>
-                    )}
-                  </div>
-                  <Button
-                    data-cta="manual"
-                    size="sm"
-                    className="text-xs"
-                    onClick={handleCatRoomAccess}
-                  >
-                    {isAuthenticated ? '캣룸 열기' : '로그인하고 열기'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
             {/* Main Content */}
             <div className="text-center space-y-6 lg:space-y-8">
               {/* Logo Animation */}
