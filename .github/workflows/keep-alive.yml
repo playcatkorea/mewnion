@@ -1,0 +1,36 @@
+name: Keep Services Alive
+
+# 매일 6시간마다 실행 (무료 플랜 슬립 방지)
+on:
+  schedule:
+    # 매일 00:00, 06:00, 12:00, 18:00 (UTC 기준)
+    - cron: '0 0,6,12,18 * * *'
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  ping-services:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Supabase
+        run: |
+          echo "🔄 Pinging Supabase to keep project active..."
+          curl -X GET "https://ylyypseqjlwsfakagbpn.supabase.co/rest/v1/" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 30 \
+            --fail-with-body || echo "⚠️ Supabase ping failed (might be paused)"
+          echo "✅ Supabase ping completed"
+
+      - name: Ping Production Site (if deployed)
+        run: |
+          echo "🔄 Pinging production site..."
+          # 배포된 사이트 URL로 변경하세요
+          # curl -X GET "https://your-site.onrender.com" --max-time 30 || echo "Site not deployed yet"
+          echo "⏭️ Skipping (site not deployed yet)"
+
+      - name: Health Check Summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Keep-alive ping completed at $(date)"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

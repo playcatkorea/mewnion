@@ -6,6 +6,10 @@ import { showFeedback } from '../../utils/navigation';
 import Header from '../../components/feature/Header';
 import Footer from '../../components/feature/Footer';
 import Button from '../../components/base/Button';
+import AvatarUpload from '../../components/feature/AvatarUpload';
+import FriendsSection from '../../components/feature/FriendsSection';
+import ChatSection from '../../components/feature/ChatSection';
+import { usePresence } from '../../hooks/usePresence';
 
 interface UserProfile {
   username: string;
@@ -44,7 +48,8 @@ interface UserPreferences {
 export default function MyPage() {
   const { user, isAuthenticated, logout } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'profile' | 'stats' | 'cats' | 'settings'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'stats' | 'cats' | 'friends' | 'messages' | 'settings'>('profile');
+  usePresence('/mypage'); // Track user presence on mypage
 
   // 데이터 상태
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -217,6 +222,8 @@ export default function MyPage() {
                     { id: 'profile', icon: 'ri-user-line', label: '프로필' },
                     { id: 'stats', icon: 'ri-bar-chart-line', label: '통계 & 코인' },
                     { id: 'cats', icon: 'ri-heart-line', label: '내 고양이' },
+                    { id: 'friends', icon: 'ri-team-line', label: '친구' },
+                    { id: 'messages', icon: 'ri-message-3-line', label: '메시지' },
                     { id: 'settings', icon: 'ri-settings-3-line', label: '설정' },
                   ].map((tab) => (
                     <button
@@ -283,6 +290,22 @@ export default function MyPage() {
                   </div>
 
                   <div className="space-y-6">
+                    {/* 아바타 업로드 */}
+                    {isEditing && (
+                      <div className="pb-6 border-b border-purple-500/30">
+                        <label className="block text-sm font-medium text-purple-200 mb-4">
+                          프로필 이미지
+                        </label>
+                        <AvatarUpload
+                          currentAvatarUrl={profile?.avatar_url}
+                          onUploadComplete={(url) => {
+                            setProfile({ ...profile!, avatar_url: url });
+                            showFeedback('프로필 이미지가 업데이트되었습니다!');
+                          }}
+                        />
+                      </div>
+                    )}
+
                     {/* 이메일 */}
                     <div>
                       <label className="block text-sm font-medium text-purple-200 mb-2">
@@ -530,6 +553,12 @@ export default function MyPage() {
                   )}
                 </div>
               )}
+
+              {/* 친구 탭 */}
+              {activeTab === 'friends' && <FriendsSection />}
+
+              {/* 메시지 탭 */}
+              {activeTab === 'messages' && <ChatSection />}
 
               {/* 설정 탭 */}
               {activeTab === 'settings' && (

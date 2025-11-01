@@ -14,9 +14,11 @@ import DAOSection from './components/DAOSection';
 import ContactSection from './components/ContactSection';
 import HomeCatRoomPreview from './components/HomeCatRoomPreview';
 import { useAuth } from '../../context/AuthContext';
+import { usePresence } from '../../hooks/usePresence';
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
+  usePresence('/'); // Track user presence on home page
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">

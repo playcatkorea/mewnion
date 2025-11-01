@@ -1,0 +1,79 @@
+name: Render Keep Alive
+
+# Render 무료 플랜은 15분 비활성시 슬립 모드 진입
+# 10분마다 핑을 보내 항상 활성 상태 유지
+on:
+  schedule:
+    # 매 10분마다 실행 (Render 15분 슬립 방지)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  ping-render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Render Service
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🌐 Render.com Keep-Alive Ping"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📅 Time: $(date '+%Y-%m-%d %H:%M:%S %Z')"
+          echo ""
+
+          # Render에 배포된 사이트 URL (배포 후 업데이트 필요)
+          RENDER_URL="${{ secrets.RENDER_URL }}"
+
+          if [ -z "$RENDER_URL" ]; then
+            echo "⏭️ RENDER_URL not set in secrets"
+            echo "ℹ️ Add your Render URL to GitHub Secrets when deployed"
+            echo ""
+            echo "예시:"
+            echo "  Repository Settings → Secrets → New secret"
+            echo "  Name: RENDER_URL"
+            echo "  Value: https://your-app.onrender.com"
+          else
+            echo "🔄 Pinging: $RENDER_URL"
+
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+              "$RENDER_URL" \
+              --max-time 60 \
+              -H "User-Agent: GitHub-Actions-KeepAlive/1.0") || RESPONSE="FAILED"
+
+            echo "   Response: HTTP $RESPONSE"
+
+            if [ "$RESPONSE" = "200" ] || [ "$RESPONSE" = "301" ] || [ "$RESPONSE" = "302" ]; then
+              echo "   ✅ Service is awake and responding"
+            elif [ "$RESPONSE" = "000" ]; then
+              echo "   ⏳ Service might be spinning up (cold start)"
+            else
+              echo "   ⚠️ Unexpected response: $RESPONSE"
+            fi
+          fi
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Render ping completed"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Ping Health Endpoint (if available)
+        run: |
+          RENDER_URL="${{ secrets.RENDER_URL }}"
+
+          if [ -n "$RENDER_URL" ]; then
+            echo "🏥 Checking health endpoint..."
+
+            # /health 또는 /api/health 엔드포인트 확인
+            for endpoint in "/health" "/api/health" ""; do
+              URL="${RENDER_URL}${endpoint}"
+              HEALTH=$(curl -s -o /dev/null -w "%{http_code}" \
+                "$URL" \
+                --max-time 30) || HEALTH="FAILED"
+
+              if [ "$HEALTH" = "200" ]; then
+                echo "   ✅ Health check passed: $URL"
+                break
+              fi
+            done
+          fi

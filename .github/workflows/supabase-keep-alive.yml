@@ -1,0 +1,91 @@
+name: Supabase Keep Alive
+
+# Supabase 무료 플랜은 7일 비활성시 자동 중지되므로
+# 매일 실행하여 프로젝트를 활성 상태로 유지합니다
+on:
+  schedule:
+    # 매일 한국시간 오전 9시 (UTC 0시)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  keep-supabase-active:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ping Supabase REST API
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🚀 Supabase Keep-Alive Script Started"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📅 Date: $(date '+%Y-%m-%d %H:%M:%S %Z')"
+          echo "🔧 Project: mewnion"
+          echo ""
+
+          # 1. Health Check
+          echo "1️⃣ Checking Supabase health endpoint..."
+          HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://ylyypseqjlwsfakagbpn.supabase.co/rest/v1/" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            --max-time 30) || HEALTH_STATUS="FAILED"
+
+          if [ "$HEALTH_STATUS" = "200" ]; then
+            echo "   ✅ Health check passed (HTTP $HEALTH_STATUS)"
+          else
+            echo "   ⚠️ Health check returned: $HEALTH_STATUS"
+            echo "   ℹ️ This might indicate the project is paused"
+          fi
+          echo ""
+
+          # 2. Database Connection Test (간단한 쿼리)
+          echo "2️⃣ Testing database connection..."
+          DB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://ylyypseqjlwsfakagbpn.supabase.co/rest/v1/profiles?select=count" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 30) || DB_STATUS="FAILED"
+
+          if [ "$DB_STATUS" = "200" ] || [ "$DB_STATUS" = "206" ]; then
+            echo "   ✅ Database connection successful (HTTP $DB_STATUS)"
+          else
+            echo "   ⚠️ Database query returned: $DB_STATUS"
+          fi
+          echo ""
+
+          # 3. Summary
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 Summary:"
+          echo "   • Health API: $HEALTH_STATUS"
+          echo "   • Database: $DB_STATUS"
+
+          if [ "$HEALTH_STATUS" = "200" ] && { [ "$DB_STATUS" = "200" ] || [ "$DB_STATUS" = "206" ]; }; then
+            echo "   • Status: ✅ Project is ACTIVE"
+          else
+            echo "   • Status: ⚠️ Project might be PAUSED"
+            echo ""
+            echo "ℹ️ If project is paused:"
+            echo "   1. Go to https://supabase.com/dashboard"
+            echo "   2. Find 'mewnion' project"
+            echo "   3. Click 'Resume project' button"
+          fi
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Create activity log
+        run: |
+          mkdir -p logs
+          echo "$(date '+%Y-%m-%d %H:%M:%S') - Keep-alive ping executed" >> logs/activity.log
+          tail -n 30 logs/activity.log > logs/activity.tmp
+          mv logs/activity.tmp logs/activity.log
+
+      - name: Commit activity log (optional)
+        continue-on-error: true
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add logs/activity.log || true
+          git commit -m "chore: update keep-alive log [skip ci]" || echo "No changes to commit"
+          # git push 는 주석 처리 (원하면 활성화)
